@@ -43,28 +43,28 @@ class _MyAppState extends State<MyApp> {
             final rowData = List.generate(7, (index) => index)
                 .map((index) =>
                     LinkedHashMap<String, dynamic>.from(<String, dynamic>{
-                      '序号': '${index + 1}',
-                      '样品编号': '${100001 + index}',
-                      '名称': '大头菜',
-                      '产地': '山东日照五莲县许孟镇',
-                      '送检单位': '山东美正生物有限公司',
-                      '检测人员': '李四',
-                      '结果': '0.43',
-                      '定性': '阴性',
-                      '检测日期': '2022-08-12'
+                      'id': '${index + 1}',
+                      'number': '${100001 + index}',
+                      'name': '大头菜',
+                      'place': '山东日照五莲县许孟镇',
+                      'booth': '山东美正生物有限公司',
+                      'person': '李四',
+                      'value': '0.43',
+                      'result': '阴性',
+                      'date': '2022-08-12'
                     }))
                 .toList();
             final contentMap = <String, dynamic>{
-              'project': '甲醛',
-              'department': '北京美正生物快检服务中心',
-              'limit': '40%',
-              'createDate': '2022-03-12',
-              'sampleType': '蔬菜类',
+              'project': '二氧化硫',
+              'department': '山东美正生物快检服务中心',
+              'limit': '50%',
+              'sendDate': '2022-09-19',
+              'sampleType': '蔬菜类，豆类',
               'method': '分光度法',
               'list': rowData.map((e) => e.values.toList()).toList()
             };
             _msDocxPlugin.generate(
-                "/data/data/com.github.qiaojun2016.ms_docx_example/files/template.docx",
+                "assets://template_table.docx",
                 '/data/data/com.github.qiaojun2016.ms_docx_example/files/generate.docx',
                 contentMap);
           },

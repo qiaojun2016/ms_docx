@@ -1,9 +1,7 @@
 package com.github.qiaojun2016.ms_docx
 
+import android.content.Context
 import org.apache.poi.xwpf.usermodel.*
-
-import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
@@ -15,7 +13,6 @@ object DocxUtil {
                 cell = row.addNewTableCell()
             }
             addParagraphTextToCell(cell, value.toString(), bold);
-
         }
     }
 
@@ -110,10 +107,12 @@ object DocxUtil {
             p.runs.forEach { run ->
                 var text: String? = run.getText(0);
                 if (text != null) {
+                    println("cell text = $text")
                     val regex = Regex("\\$\\{(\\w+)\\}")
                     val placeNames = regex.findAll(text, 0).toList()
                         .map { it.destructured.component1() }
                     placeNames.forEach { name ->
+                        println("placeName = $name")
                         if (dict.keys.contains(name)) {
                             val value: String =
                                 dict.getValue(name).toString();
@@ -126,82 +125,35 @@ object DocxUtil {
         }
     }
 
-    fun generateWord(input: String, output: String, content: Map<String, Any>) {
-        val templateFile = File(input)
-        val docx = XWPFDocument(FileInputStream(templateFile))
-        val eleIterator = docx.bodyElementsIterator;
-        traverseTable(docx) { table ->
-            traverseRow(table) { index, nextRow ->
-                nextRow.tableCells.forEach tableCell@{ cell ->
-                    println(cell.text)
-                    /// 准备插入行数据
-                    if (cell.text.contains("\${list}")) {
-                        /// 删除改行，在改行的基础上新增N列
-                        table.removeRow(index)
-                        appendRows(
-                            table,
-                            index,
-                            content.getValue("list") as List<List<String>>
-                        )
+    fun generateWord(context: Context, input: String, output: String, content: Map<String, Any>) {
+        val inputStream = InputStreamSource().getStream(context, input)
+        inputStream.use {
+            val docx = XWPFDocument(it)
+            traverseTable(docx) { table ->
+                traverseRow(table) { index, nextRow ->
+                    nextRow.tableCells.forEach tableCell@{ cell ->
+                        println(cell.text)
+                        /// 准备插入行数据
+                        if (cell.text.contains("\${list}")) {
+                            /// 删除改行，在改行的基础上新增N列
+                            table.removeRow(index)
+                            appendRows(
+                                table,
+                                index,
+                                content.getValue("list") as List<List<String>>
+                            )
 
-                        return@tableCell
-                    } else {
-                        replacePlaceHolderText(cell, content);
+                            return@tableCell
+                        } else {
+                            replacePlaceHolderText(cell, content);
+                        }
                     }
                 }
+            }
+            /// 写入word
+            FileOutputStream(output).use { outputStream ->
+                docx.write(outputStream)
             }
         }
-
-/*
-        while (eleIterator.hasNext()) {
-            val docElement = eleIterator.next()
-            if ("TABLE" == docElement.elementType.name.uppercase()) {
-                docElement.body.tables.forEach { table ->
-                    println("total rows: ${table.numberOfRows}")
-                    var index = 0;
-                    while (index < table.rows.size) {
-                        val nextRow = table.rows[index];
-                        nextRow.tableCells.forEach tableCell@{ cell ->
-                            println(cell.text)
-                            /// 准备插入行数据
-                            if (cell.text.contains("\${list}")) {
-                                table.removeRow(index)
-                                val listValues =
-                                    content.getValue("list") as List<Map<String, String>>
-                                listValues.forEach { rowData ->
-                                    val newRow = insertRow(table, index - 1, index);
-                                    //val newRow = XWPFTableRow(table.ctTbl.insertNewTr(index), table)
-                                    setRowData(rowData.values.toList(), newRow, false)
-                                }
-                            } else {
-                                cell.paragraphs.forEach { p ->
-                                    p.runs.forEach { run ->
-                                        var text: String? = run.getText(0);
-                                        if (text != null) {
-                                            val regex = Regex("\\$\\{(\\w+)\\}")
-                                            val placeNames = regex.findAll(text, 0).toList()
-                                                .map { it.destructured.component1() }
-                                            placeNames.forEach { name ->
-                                                if (content.keys.contains(name)) {
-                                                    val value: String =
-                                                        content.getValue(name).toString();
-                                                    text = text?.replace("\${$name}", value);
-                                                }
-
-                                            }
-                                            run.setText(text, 0)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        index++
-                    }
-
-
-                }
-            }
-        }*/
-        docx.write(FileOutputStream(output))
     }
 }
