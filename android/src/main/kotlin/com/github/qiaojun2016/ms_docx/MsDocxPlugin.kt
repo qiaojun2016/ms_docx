@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.FileNotFoundException
+import java.io.IOException
 
 const val GENERATE_WORD = "generateWord"
 
@@ -38,6 +39,10 @@ class MsDocxPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(true)
                 } catch (e: FileNotFoundException) {
                     result.error("104", "template not found path = $input", null)
+                } catch (e2: UnsupportedOperationException) {
+                    result.error("105", e2.message, e2.message);
+                } catch (e3: IOException) {
+                    result.error("102", e3.message, e3.message);
                 }
                 return
             }

@@ -11,7 +11,7 @@ import java.io.InputStream;
 public class InputStreamSource {
 
     private static final int BUFFER_SIZE = 32 * 1024;
-    private static final String ERROR_UNSUPPORTED_SCHEME = "Unsupported file source";
+    private static final String ERROR_UNSUPPORTED_SCHEME = "Unsupported file source path = %s";
 
     InputStream getStream(Context context, String fileUri) throws IOException {
         switch (SourceScheme.ofUri(fileUri)) {
