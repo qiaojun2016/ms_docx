@@ -43,7 +43,6 @@ class MsDocxPlugin : FlutterPlugin, MethodCallHandler {
                         Handler(Looper.getMainLooper()).post {
                             result.success(true)
                         }
-                        result.success(true)
                     } catch (e: FileNotFoundException) {
                         Handler(Looper.getMainLooper()).post {
                             result.error("104", "template not found path = $input", null)
@@ -58,8 +57,6 @@ class MsDocxPlugin : FlutterPlugin, MethodCallHandler {
                         }
                     }
                 }.start()
-
-                return
             }
             else -> result.notImplemented()
         }
