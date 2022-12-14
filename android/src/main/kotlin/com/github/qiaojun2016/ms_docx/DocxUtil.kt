@@ -2,6 +2,7 @@ package com.github.qiaojun2016.ms_docx
 
 import android.content.Context
 import org.apache.poi.xwpf.usermodel.*
+import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
@@ -127,7 +128,7 @@ object DocxUtil {
 
     fun generateWord(context: Context, input: String, output: String, content: Map<String, Any>) {
         val inputStream = InputStreamSource().getStream(context, input)
-        inputStream.use {
+        inputStream.use { it ->
             val docx = XWPFDocument(it)
             traverseTable(docx) { table ->
                 traverseRow(table) { index, nextRow ->
@@ -153,8 +154,12 @@ object DocxUtil {
             /// 写入word
             val outputStream = FileOutputStream(output);
             docx.write(outputStream);
-            outputStream.fd.sync();
-            println("document write success!");
+            outputStream.flush();
+            outputStream.close();
+            FileInputStream(output).use {
+               println("document write success ${it.available()}")
+            }
+
             /*
             FileOutputStream(output).use { outputStream ->
                 try {
