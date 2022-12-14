@@ -152,9 +152,13 @@ object DocxUtil {
             }
             /// 写入word
             FileOutputStream(output).use { outputStream ->
-                docx.write(outputStream)
-                outputStream.fd.sync()
-                println("document write success");
+                try {
+                    docx.write(outputStream)
+                } catch (ex: Exception) {
+                    println("document write failure! ${ex.message}");
+                }
+                outputStream.flush();
+
             }
         }
     }
