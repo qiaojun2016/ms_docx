@@ -154,21 +154,12 @@ object DocxUtil {
             /// 写入word
             val outputStream = FileOutputStream(output);
             docx.write(outputStream);
-            outputStream.flush();
-            outputStream.close();
+            outputStream.flush()
+            outputStream.close()
+            println(Thread.currentThread().name);
             FileInputStream(output).use {
-               println("document write success ${it.available()}")
+                println("document write success! bytes = ${it.available()}")
             }
-
-            /*
-            FileOutputStream(output).use { outputStream ->
-                try {
-                    docx.write(outputStream)
-                } catch (ex: Exception) {
-                    println("document write failure! ${ex.message}");
-                }
-                outputStream.flush()
-            }*/
         }
     }
 }
