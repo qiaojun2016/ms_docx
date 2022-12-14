@@ -157,7 +157,7 @@ object DocxUtil {
             outputStream.flush()
             outputStream.close()
             FileOutputStream(output, true).use {
-                it.write(byteArrayOf(0x0A));
+                it.fd.sync()
             }
             println("document write success!");
         }
