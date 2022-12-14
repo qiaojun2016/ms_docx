@@ -156,7 +156,6 @@ object DocxUtil {
             docx.write(outputStream);
             outputStream.flush()
             outputStream.close()
-            println(Thread.currentThread().name);
             FileInputStream(output).use {
                 println("document write success! bytes = ${it.available()}")
             }

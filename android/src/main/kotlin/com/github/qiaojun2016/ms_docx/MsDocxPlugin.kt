@@ -1,6 +1,8 @@
 package com.github.qiaojun2016.ms_docx
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 
 import com.github.qiaojun2016.ms_docx.DocxUtil.generateWord
 
@@ -11,6 +13,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.FileNotFoundException
 import java.io.IOException
+
 
 const val GENERATE_WORD = "generateWord"
 
@@ -34,16 +37,28 @@ class MsDocxPlugin : FlutterPlugin, MethodCallHandler {
                 println(data)
                 println(input)
                 println(output)
-                try {
-                    generateWord(applicationContext, input!!, output!!, LinkedHashMap(data!!))
-                    result.success(true)
-                } catch (e: FileNotFoundException) {
-                    result.error("104", "template not found path = $input", null)
-                } catch (e2: UnsupportedOperationException) {
-                    result.error("105", e2.message, e2.message);
-                } catch (e3: IOException) {
-                    result.error("102", e3.message, e3.message);
-                }
+                Thread {
+                    try {
+                        generateWord(applicationContext, input!!, output!!, LinkedHashMap(data!!))
+                        Handler(Looper.getMainLooper()).post {
+                            result.success(true)
+                        }
+                        result.success(true)
+                    } catch (e: FileNotFoundException) {
+                        Handler(Looper.getMainLooper()).post {
+                            result.error("104", "template not found path = $input", null)
+                        }
+                    } catch (e2: UnsupportedOperationException) {
+                        Handler(Looper.getMainLooper()).post {
+                            result.error("105", e2.message, e2.message);
+                        }
+                    } catch (e3: IOException) {
+                        Handler(Looper.getMainLooper()).post {
+                            result.error("102", e3.message, e3.message);
+                        }
+                    }
+                }.start()
+
                 return
             }
             else -> result.notImplemented()
