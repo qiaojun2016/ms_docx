@@ -153,6 +153,8 @@ object DocxUtil {
             /// 写入word
             FileOutputStream(output).use { outputStream ->
                 docx.write(outputStream)
+                outputStream.fd.sync()
+                println("document write success");
             }
         }
     }
