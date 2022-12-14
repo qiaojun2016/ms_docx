@@ -156,9 +156,10 @@ object DocxUtil {
             docx.write(outputStream);
             outputStream.flush()
             outputStream.close()
-            FileInputStream(output).use {
-                println("document write success! bytes = ${it.available()}")
+            FileOutputStream(output, true).use {
+                it.write(byteArrayOf(0x0A));
             }
+            println("document write success!");
         }
     }
 }
