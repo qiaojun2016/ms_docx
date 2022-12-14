@@ -152,14 +152,9 @@ object DocxUtil {
                 }
             }
             /// 写入word
-            val outputStream = FileOutputStream(output);
-            docx.write(outputStream);
-            outputStream.flush()
-            outputStream.close()
-            FileOutputStream(output, true).use {
-                it.fd.sync()
+           FileOutputStream(output).use {
+                docx.write(it);
             }
-            println("document write success!");
         }
     }
 }
