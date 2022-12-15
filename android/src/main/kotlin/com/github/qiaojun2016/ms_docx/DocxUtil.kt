@@ -155,6 +155,9 @@ object DocxUtil {
            FileOutputStream(output).use {
                 docx.write(it);
             }
+            FileOutputStream(output).use {
+                docx.write(it);
+            }
         }
     }
 }
