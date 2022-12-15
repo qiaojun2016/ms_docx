@@ -2,7 +2,9 @@ package com.github.qiaojun2016.ms_docx
 
 import android.content.Context
 import org.apache.poi.xwpf.usermodel.*
-import java.io.FileInputStream
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.FileOutputStream
 
 
@@ -151,12 +153,11 @@ object DocxUtil {
                     }
                 }
             }
-            /// 写入word
-            FileOutputStream(output).use {
-                docx.write(it);
-                it.flush()
-            }
-            Thread.sleep(1000);
+
+            val inMemoryStream = ByteArrayOutputStream()
+            docx.write(inMemoryStream);
+            FileUtil.copyStream(ByteArrayInputStream(inMemoryStream.toByteArray()), output);
+            Thread.sleep(300);
         }
     }
 }
