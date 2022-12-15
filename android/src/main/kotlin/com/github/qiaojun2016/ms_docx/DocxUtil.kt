@@ -152,12 +152,11 @@ object DocxUtil {
                 }
             }
             /// 写入word
-           FileOutputStream(output).use {
-                docx.write(it);
-            }
             FileOutputStream(output).use {
                 docx.write(it);
+                it.flush()
             }
+            Thread.sleep(1000);
         }
     }
 }
