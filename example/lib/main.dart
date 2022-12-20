@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             };
             _msDocxPlugin.generate(
                 "assets://template_table.docx",
-                '/data/data/com.github.qiaojun2016.ms_docx_example/files/generate.docx',
+                '/mnt/sdcard/Download/generate.docx',
                 contentMap);
           },
           child: const Text("生成Word"),
