@@ -39,23 +39,21 @@ object DocxUtil {
     }
 
 
-    private fun addParagraphTextToCell(cell: XWPFTableCell, value: String, bold: Boolean) {
-        val paragraph = cell.addParagraph()
+    private fun addParagraphTextToCell(cell: XWPFTableCell, value: String, bold: Boolean, colorHex:String = "000000") {
+        val paragraph =   cell.paragraphs[0]
         with(paragraph) {
             alignment = ParagraphAlignment.CENTER
             verticalAlignment = TextAlignment.CENTER
-            spacingBefore = 4
-            spacingAfter = 4
-
             with(createRun()) {
                 isBold = bold
                 fontSize = 9
+                fontFamily = "黑体"
+                color = colorHex
                 setText(value, 0)
-                addBreak()
+                alignment = ParagraphAlignment.CENTER
             }
         }
         cell.verticalAlignment = XWPFTableCell.XWPFVertAlign.CENTER
-
     }
 
     /**
@@ -133,6 +131,8 @@ object DocxUtil {
         inputStream.use { it ->
             val docx = XWPFDocument(it)
             traverseTable(docx) { table ->
+                /// 设置单元格 margin
+                table.setCellMargins(160, 100,160, 100);
                 traverseRow(table) { index, nextRow ->
                     nextRow.tableCells.forEach tableCell@{ cell ->
                         println(cell.text)
@@ -153,7 +153,6 @@ object DocxUtil {
                     }
                 }
             }
-
             val inMemoryStream = ByteArrayOutputStream()
             docx.write(inMemoryStream);
             FileUtil.copyStream(ByteArrayInputStream(inMemoryStream.toByteArray()), output);
